@@ -14,11 +14,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     isCartOpen, setIsCartOpen,
     cartItems, handleUpdateCartQty, handleRemoveCartItem, handleClearCart,
     setIsAuthModalOpen, setAuthMode, setAuthError,
+    searchQuery, setSearchQuery,
+    selectedCategorySlug, setSelectedCategorySlug,
   } = useStore();
 
   const [categories, setCategories] = useState<Categoria[]>([]);
-  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetch('/api/categories')

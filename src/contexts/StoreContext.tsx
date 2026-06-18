@@ -33,6 +33,12 @@ interface StoreContextType {
   handleAuthSubmit: (e: FormEvent) => Promise<void>;
   handleLogout: () => Promise<void>;
 
+  // Search & Filter
+  searchQuery: string;
+  setSearchQuery: (v: string) => void;
+  selectedCategorySlug: string | null;
+  setSelectedCategorySlug: (v: string | null) => void;
+
   // Utils
   formatKz: (value: number) => string;
   navigate: (path: string) => void;
@@ -56,6 +62,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authPhone, setAuthPhone] = useState('');
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
 
   // Load current user on mount
   useEffect(() => {
@@ -167,6 +177,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       authName, setAuthName, authEmail, setAuthEmail,
       authPassword, setAuthPassword, authPhone, setAuthPhone,
       handleAuthSubmit, handleLogout, formatKz, navigate,
+      searchQuery, setSearchQuery, selectedCategorySlug, setSelectedCategorySlug,
     }}>
       {children}
     </StoreContext.Provider>
