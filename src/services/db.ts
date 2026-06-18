@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { supabase, hasSupabaseConfig } from '../lib/supabase';
+import { supabase, hasSupabaseConfig } from '@/lib/supabase';
 import { 
   Usuario, Categoria, Produto, ImagemProduto, 
   VarianteProduto, Endereco, Pedido, ItemPedido,
   ProdutoDetalhado, PedidoDetalhado, CartItem,
   Sessao, Evento
-} from '../types';
+} from '@/types';
 
 // ==========================================
 // SEED DATA FOR SIMULATED LOCALSTORAGE DB

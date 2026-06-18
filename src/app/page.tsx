@@ -1,0 +1,139 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { Search, Sparkles } from 'lucide-react';
+import { useStore } from '@/contexts/StoreContext';
+import ProductCard from '@/components/ProductCard';
+import { Categoria, ProdutoDetalhado } from '@/types';
+
+export default function HomePage() {
+  const { navigate, formatKz } = useStore();
+  const [products, setProducts] = useState<ProdutoDetalhado[]>([]);
+  const [categories, setCategories] = useState<Categoria[]>([]);
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/products').then(r => r.json()),
+      fetch('/api/categories').then(r => r.json()),
+    ]).then(([prodData, catData]) => {
+      setProducts(prodData.products || []);
+      setCategories(catData.categories || []);
+      setLoading(false);
+    });
+  }, []);
+
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = selectedCategorySlug ? p.categoria?.slug === selectedCategorySlug : true;
+    if (!searchQuery.trim()) return matchesCategory && p.ativo;
+    const terms = searchQuery.toLowerCase().trim().split(/\s+/);
+    const matchesSearch = terms.every(term =>
+      p.nome?.toLowerCase().includes(term) ||
+      p.descricao?.toLowerCase().includes(term) ||
+      p.categoria?.nome?.toLowerCase().includes(term) ||
+      p.variantes?.some(v =>
+        v.designativo?.toLowerCase().includes(term) ||
+        v.cor?.toLowerCase().includes(term) ||
+        v.tamanho?.toLowerCase().includes(term)
+      )
+    );
+    return matchesCategory && matchesSearch && p.ativo;
+  });
+
+  const fallbackImages = [
+    'https://images.unsplash.com/photo-1620331713537-bca9da369e80?auto=format&fit=crop&q=80&w=200',
+    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=200',
+    'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=200',
+    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=200',
+    'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=200',
+    'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=200',
+  ];
+
+  return (
+    <div className="space-y-12 animate-in fade-in duration-300">
+      {/* HERO BANNER */}
+      <header className="relative bg-stone-950 overflow-hidden py-16 md:py-28 text-white px-4">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-30 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/90 to-transparent" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <span className="text-[10px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-full font-mono uppercase tracking-widest">
+            Coleção de Luxo 2026/2027
+          </span>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-none text-white max-w-2xl font-serif">
+            Destaque a sua <span className="text-amber-500 italic font-sans font-light">Beleza</span> Natural
+          </h1>
+          <p className="text-stone-300 max-w-md text-xs md:text-sm font-sans leading-relaxed font-light">
+            Explore o luxo em perucas front lace HD realistas, alta-costura sofisticada de Luanda, sandálias cravejadas de brilhantes e acessórios exclusivos.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row gap-4 max-w-md">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-stone-400" />
+              <input type="text"
+                placeholder="Pesquisar por perucas, vestidos, batons..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full bg-white/10 backdrop-blur-md rounded-full border border-white/20 pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-400 focus:outline-none focus:border-amber-500" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* CATEGORIES + PRODUCTS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-baseline mb-6 border-b border-stone-100 pb-3">
+          <div>
+            <h2 className="text-lg font-bold tracking-wide uppercase text-stone-900">
+              {selectedCategorySlug ? categories.find(c => c.slug === selectedCategorySlug)?.nome : 'Nossas Categorias'}
+            </h2>
+            <p className="text-[10px] font-mono text-stone-400 uppercase tracking-widest mt-0.5">
+              {selectedCategorySlug ? 'Filtro por departamento' : 'Exclusividade em cada detalhe'}
+            </p>
+          </div>
+          {selectedCategorySlug && (
+            <button onClick={() => setSelectedCategorySlug(null)} className="text-xs uppercase font-mono text-amber-700 font-semibold">
+              Ver Tudo ×
+            </button>
+          )}
+        </div>
+
+        {/* Category grid */}
+        {!selectedCategorySlug && !loading && (
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-10">
+            {categories.map((cat, idx) => (
+              <div key={cat.id} onClick={() => setSelectedCategorySlug(cat.slug)}
+                className="group flex flex-col items-center p-4 bg-white border border-stone-100 rounded-2xl hover:border-amber-200 transition cursor-pointer text-center">
+                <div className="w-16 h-16 rounded-full overflow-hidden mb-2.5 border border-stone-200/50">
+                  <img src={fallbackImages[idx] || fallbackImages[0]} alt={cat.nome} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                </div>
+                <h3 className="font-serif font-black text-xs text-stone-900 tracking-wide leading-none">{cat.nome.split(' & ')[0]}</h3>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Products grid */}
+        {loading ? (
+          <div className="py-20 text-center">
+            <p className="text-stone-400 font-mono text-xs uppercase tracking-widest animate-pulse">A carregar vitrina...</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="py-20 text-center bg-stone-50 rounded-3xl border border-stone-100">
+            <p className="font-bold text-stone-800">Nenhum produto em vitrine encontrado</p>
+            <button onClick={() => { setSearchQuery(''); setSelectedCategorySlug(null); }}
+              className="mt-4 px-4 py-2 bg-[#171512] text-white text-xs font-mono rounded">
+              Redefinir Filtros
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.map(p => (
+              <ProductCard key={p.id} product={p} onViewProduct={slug => navigate(`/product/${slug}`)} />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}

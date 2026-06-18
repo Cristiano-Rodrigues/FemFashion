@@ -1,12 +1,9 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import { useState, useEffect } from 'react';
 import { ShoppingBag, X, Trash2, Plus, Minus, CreditCard, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck, Phone } from 'lucide-react';
-import { CartItem, Endereco } from '../types';
-import { DatabaseService } from '../services/db';
+import { CartItem, Endereco } from '@/types';
+import { DatabaseService } from '@/services/db';
 
 interface CartProps {
   isOpen: boolean;

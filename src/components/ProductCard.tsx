@@ -1,10 +1,7 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import { Eye, BadgeAlert, ShoppingCart } from 'lucide-react';
-import { ProdutoDetalhado } from '../types';
+import { ProdutoDetalhado } from '@/types';
 
 interface ProductCardProps {
   product: ProdutoDetalhado;

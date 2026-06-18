@@ -1,7 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
 import { 
@@ -10,8 +7,8 @@ import {
   Users, RefreshCw, ShoppingCart, TrendingUp,
   AlertOctagon, Check, ToggleLeft, ToggleRight
 } from 'lucide-react';
-import { Categoria, ProdutoDetalhado, PedidoDetalhado, Usuario, VarianteProduto } from '../types';
-import { DatabaseService } from '../services/db';
+import { Categoria, ProdutoDetalhado, PedidoDetalhado, Usuario, VarianteProduto } from '@/types';
+import { DatabaseService } from '@/services/db';
 
 interface AdminPanelProps {
   currentUser: Usuario | null;

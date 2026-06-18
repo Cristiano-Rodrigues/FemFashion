@@ -1,11 +1,9 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import { ShoppingBag, Shield, LogIn, User, LogOut, Menu, X, Search, ChevronDown } from 'lucide-react';
-import { Categoria, Usuario } from '../types';
+import { Categoria, Usuario } from '@/types';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface HeaderProps {
   categorias: Categoria[];
@@ -16,7 +14,6 @@ interface HeaderProps {
   currentUser: Usuario | null;
   onOpenAuthModal: () => void;
   onLogout: () => void;
-  currentPath: string;
   onNavigate: (path: string) => void;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
@@ -31,11 +28,11 @@ export default function Header({
   currentUser,
   onOpenAuthModal,
   onLogout,
-  currentPath,
   onNavigate,
   searchQuery,
   onSearchQueryChange
 }: HeaderProps) {
+  const currentPath = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [catDropdownOpen, setCatDropdownOpen] = useState(false);
 
