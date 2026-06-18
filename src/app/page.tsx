@@ -58,25 +58,12 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-30 mix-blend-overlay" />
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/90 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <span className="text-[10px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-full font-mono uppercase tracking-widest">
-            Coleção de Luxo 2026/2027
-          </span>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-none text-white max-w-2xl font-serif">
             Destaque a sua <span className="text-amber-500 italic font-sans font-light">Beleza</span> Natural
           </h1>
           <p className="text-stone-300 max-w-md text-xs md:text-sm font-sans leading-relaxed font-light">
             Explore o luxo em perucas front lace HD realistas, alta-costura sofisticada de Luanda, sandálias cravejadas de brilhantes e acessórios exclusivos.
           </p>
-          <div className="pt-2 flex flex-col sm:flex-row gap-4 max-w-md">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-stone-400" />
-              <input type="text"
-                placeholder="Pesquisar por perucas, vestidos, batons..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white/10 backdrop-blur-md rounded-full border border-white/20 pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-400 focus:outline-none focus:border-amber-500" />
-            </div>
-          </div>
         </div>
       </header>
 

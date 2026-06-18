@@ -33,7 +33,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Top Banner */}
       <div className="bg-[#1D1B18] text-white py-2 text-center text-[10px] font-mono tracking-widest uppercase flex items-center justify-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-        <span>Envio Expresso em Luanda e Províncias • Moda Feminina Premium Angola</span>
+        <span>Envio Expresso em Luanda e Províncias • Moda Feminina angolana</span>
       </div>
 
       <Header

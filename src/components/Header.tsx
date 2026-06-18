@@ -182,13 +182,6 @@ export default function Header({
               </button>
             )}
 
-            {/* Quick Demo Assist info */}
-            {!currentUser && (
-              <span className="hidden xl:inline text-[9px] font-mono text-neutral-400 bg-stone-50 border border-neutral-100 px-2 py-1 rounded">
-                Admin Demo: admin@femfashion.ao (password: admin123)
-              </span>
-            )}
-
             {/* Account Icon Control */}
             {currentUser ? (
               <div className="flex items-center gap-2">
