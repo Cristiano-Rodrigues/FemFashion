@@ -230,13 +230,33 @@ export default function App() {
     }).format(value).replace('AOA', 'Kz');
   };
 
-  // Filtering products list
+  // Filtering products list (ultra-robust matching)
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategorySlug 
       ? p.categoria?.slug === selectedCategorySlug 
       : true;
-    const matchesSearch = p.nome.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          p.descricao.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (!searchQuery.trim()) {
+      return matchesCategory && p.ativo;
+    }
+
+    // Split search query by spaces into tokens/terms to match robustly
+    const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/);
+
+    const matchesSearch = searchTerms.every(term => {
+      const inName = p.nome?.toLowerCase().includes(term);
+      const inDesc = p.descricao?.toLowerCase().includes(term);
+      const inCat = p.categoria?.nome?.toLowerCase().includes(term);
+      
+      const inVariants = p.variantes?.some(v => 
+        v.designativo?.toLowerCase().includes(term) ||
+        v.cor?.toLowerCase().includes(term) ||
+        v.tamanho?.toLowerCase().includes(term)
+      );
+
+      return inName || inDesc || inCat || inVariants;
+    });
+
     return matchesCategory && matchesSearch && p.ativo;
   });
 
@@ -265,6 +285,8 @@ export default function App() {
         onLogout={handleLogout}
         currentPath={currentPath}
         onNavigate={navigateTo}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
       />
 
       {/* RENDER STORES PATHS */}

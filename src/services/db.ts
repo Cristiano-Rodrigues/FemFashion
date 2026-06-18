@@ -135,9 +135,9 @@ const SEED_IMAGES: ImagemProduto[] = [
   // Dresses
   { id: 'img3', id_produto: 'p3', url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=800', ranking: 1 },
   { id: 'img3b', id_produto: 'p3', url: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=800', ranking: 2 },
-  { id: 'img4', id_produto: 'p4', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800', ranking: 1 },
+  { id: 'img4', id_produto: 'p4', url: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&q=80&w=800', ranking: 1 },
   // Shoes
-  { id: 'img5', id_produto: 'p5', url: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=800', ranking: 1 },
+  { id: 'img5', id_produto: 'p5', url: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&q=80&w=800', ranking: 1 },
   { id: 'img6', id_produto: 'p6', url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=800', ranking: 1 },
   // Bag
   { id: 'img7', id_produto: 'p7', url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=800', ranking: 1 },

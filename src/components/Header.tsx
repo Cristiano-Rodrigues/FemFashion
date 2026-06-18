@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShoppingBag, Shield, LogIn, User, LogOut, Menu, X } from 'lucide-react';
+import { ShoppingBag, Shield, LogIn, User, LogOut, Menu, X, Search, ChevronDown } from 'lucide-react';
 import { Categoria, Usuario } from '../types';
 import { useState } from 'react';
 
@@ -18,6 +18,8 @@ interface HeaderProps {
   onLogout: () => void;
   currentPath: string;
   onNavigate: (path: string) => void;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
 }
 
 export default function Header({
@@ -30,43 +32,48 @@ export default function Header({
   onOpenAuthModal,
   onLogout,
   currentPath,
-  onNavigate
+  onNavigate,
+  searchQuery,
+  onSearchQueryChange
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-100 shadow-sm transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 gap-4">
           
           {/* Logo Brand Title */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button 
               onClick={() => {
                 onSelectCategory(null);
+                onSearchQueryChange('');
                 onNavigate('/');
               }} 
               className="group text-left"
               id="header-brand-logo-btn"
             >
-              <h1 className="text-2xl font-serif font-black tracking-widest text-[#1D1B18] transition-colors focus:outline-none">
+              <h1 className="text-xl sm:text-2xl font-serif font-black tracking-widest text-[#1D1B18] transition-colors focus:outline-none">
                 fem<span className="text-amber-600 font-sans font-light italic">fashion</span>
               </h1>
-              <p className="text-[9px] font-mono tracking-widest text-stone-400 group-hover:text-amber-600 uppercase">
+              <p className="text-[8px] sm:text-[9px] font-mono tracking-widest text-stone-400 group-hover:text-amber-600 uppercase">
                 LUANDA LUXURY BOUTIQUE
               </p>
             </button>
           </div>
 
-          {/* Desktop Categories Filter Shortcuts */}
-          <div className="hidden lg:flex space-x-6 items-center">
+          {/* New Desktop Categories Layout with Dropdown instead of long row (prevents UI breaking) */}
+          <div className="hidden lg:flex space-x-4 items-center shrink-0">
             <button
               onClick={() => {
                 onSelectCategory(null);
+                onSearchQueryChange('');
                 onNavigate('/');
               }}
               className={`text-xs uppercase font-medium tracking-widest pb-1 border-b-2 transition-all ${
-                selectedCategorySlug === null && currentPath === '/'
+                selectedCategorySlug === null && searchQuery === '' && currentPath === '/'
                   ? 'border-amber-600 text-stone-900 font-semibold'
                   : 'border-transparent text-stone-500 hover:text-stone-900 hover:border-stone-300'
               }`}
@@ -74,32 +81,98 @@ export default function Header({
             >
               Coleções
             </button>
-            {categorias.map(cat => (
+
+            {/* Elegant Dropdown for Categories */}
+            <div className="relative">
               <button
-                key={cat.id}
-                onClick={() => {
-                  onSelectCategory(cat.slug);
-                  onNavigate('/');
-                }}
-                className={`text-xs uppercase font-medium tracking-widest pb-1 border-b-2 transition-all ${
-                  selectedCategorySlug === cat.slug && currentPath === '/'
+                onClick={() => setCatDropdownOpen(!catDropdownOpen)}
+                onMouseEnter={() => setCatDropdownOpen(true)}
+                className={`flex items-center gap-1 text-xs uppercase font-medium tracking-widest pb-1 border-b-2 transition-all ${
+                  selectedCategorySlug !== null && currentPath === '/'
                     ? 'border-amber-600 text-stone-900 font-semibold'
                     : 'border-transparent text-stone-500 hover:text-stone-900 hover:border-stone-300'
                 }`}
-                id={`nav-cat-${cat.slug}-btn`}
+                id="nav-categories-dropdown-btn"
               >
-                {cat.nome.split(' & ')[0]}
+                <span>Categorias</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${catDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-            ))}
+
+              {catDropdownOpen && (
+                <div 
+                  className="absolute left-0 mt-2 w-64 bg-white border border-stone-100 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                  onMouseLeave={() => setCatDropdownOpen(false)}
+                >
+                  <div className="px-4 py-1.5 border-b border-stone-50 mb-1">
+                    <p className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Filtrar por Departamento</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      onSelectCategory(null);
+                      onNavigate('/');
+                      setCatDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-xs font-sans font-medium hover:bg-stone-50 transition-colors ${
+                      selectedCategorySlug === null ? 'text-amber-600 bg-amber-50/50' : 'text-stone-700'
+                    }`}
+                  >
+                    Ver Todas as Categorias ({categorias.length})
+                  </button>
+                  {categorias.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        onSelectCategory(cat.slug);
+                        onNavigate('/');
+                        setCatDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-xs font-sans transition-colors hover:bg-stone-50 ${
+                        selectedCategorySlug === cat.slug ? 'text-amber-600 bg-amber-50/50 font-semibold' : 'text-stone-600'
+                      }`}
+                      id={`nav-cat-${cat.slug}-btn`}
+                    >
+                      {cat.nome}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* New Robust Menu Search Box - Centered in free space */}
+          <div className="hidden md:block flex-grow max-w-md mx-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Pesquisar por perucas, vestidos, sapatos de luxo..."
+                value={searchQuery}
+                onChange={(e) => {
+                  onSearchQueryChange(e.target.value);
+                  if (currentPath !== '/') {
+                    onNavigate('/');
+                  }
+                }}
+                className="w-full bg-[#FAF9F6] border border-stone-200 rounded-full pl-10 pr-4 py-2 text-xs text-stone-900 placeholder-stone-400 hover:border-amber-500/50 focus:border-amber-600 focus:bg-white focus:outline-none transition duration-150 shadow-sm"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => onSearchQueryChange('')}
+                  className="absolute right-3 top-2 px-1 text-[10px] font-mono hover:text-amber-600 text-stone-400"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
           </div>
 
           {/* User Interaction Controls */}
-          <div className="flex items-center space-x-3">
-            {/* Admin Toggle button (Visible only if current user is Admin OR if we want to preview easily) */}
+          <div className="flex items-center space-x-2 shrink-0">
+            {/* Admin Toggle button */}
             {currentUser?.role === 'admin' && (
               <button
                 onClick={() => onNavigate(currentPath.startsWith('/admin') ? '/' : '/admin')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono tracking-wider uppercase transition-all ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-mono tracking-wider uppercase transition-all ${
                   currentPath.startsWith('/admin')
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
@@ -107,14 +180,14 @@ export default function Header({
                 title="Ir para o Backoffice"
                 id="backoffice-quick-toggle-btn"
               >
-                <Shield className="w-3.5 h-3.5 text-amber-500 fill-amber-500 animate-pulse" />
-                <span>BACKOFFICE</span>
+                <Shield className="w-3 h-3 text-amber-500 fill-amber-500 animate-pulse" />
+                <span className="hidden sm:inline">BACKOFFICE</span>
               </button>
             )}
 
-            {/* Quick Demo Assist - Let's allow users to see admin options if they login */}
+            {/* Quick Demo Assist info */}
             {!currentUser && (
-              <span className="hidden md:inline text-[10px] font-mono text-neutral-400 bg-stone-50 border border-neutral-100 px-2 py-1 rounded">
+              <span className="hidden xl:inline text-[9px] font-mono text-neutral-400 bg-stone-50 border border-neutral-100 px-2 py-1 rounded">
                 Admin Demo: admin@femfashion.ao (password: admin123)
               </span>
             )}
@@ -123,8 +196,8 @@ export default function Header({
             {currentUser ? (
               <div className="flex items-center gap-2">
                 <div className="hidden sm:block text-right">
-                  <p className="text-[11px] font-mono font-medium text-stone-950">{currentUser.nome}</p>
-                  <p className="text-[9px] font-mono text-amber-600 uppercase">{currentUser.role}</p>
+                  <p className="text-[11px] font-mono font-medium text-stone-950 truncate max-w-[100px]">{currentUser.nome}</p>
+                  <p className="text-[8px] font-mono text-amber-600 uppercase">{currentUser.role}</p>
                 </div>
                 <div className="relative group">
                   <button className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FAF9F6] border border-stone-200 hover:border-amber-600 hover:text-amber-600 text-stone-700 transition" id="user-profile-menu-btn">
@@ -137,7 +210,9 @@ export default function Header({
                     </div>
                     {currentUser.role === 'admin' && (
                       <button
-                        onClick={() => onNavigate('/admin')}
+                        onClick={() => {
+                          onNavigate('/admin');
+                        }}
                         className="w-full text-left px-4 py-2 text-xs text-stone-700 hover:bg-amber-50 hover:text-amber-700 flex items-center gap-2"
                         id="menu-backoffice-btn"
                       >
@@ -159,7 +234,7 @@ export default function Header({
             ) : (
               <button
                 onClick={onOpenAuthModal}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-stone-200 hover:border-amber-600 hover:text-amber-700 rounded-full text-xs font-medium text-stone-700 transition"
+                className="flex items-center gap-1 px-2.5 py-1.5 border border-stone-200 hover:border-amber-600 hover:text-amber-700 rounded-full text-xs font-medium text-stone-700 transition"
                 id="main-login-btn"
               >
                 <LogIn className="w-3.5 h-3.5 text-stone-500" />
@@ -198,37 +273,62 @@ export default function Header({
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-stone-100 animate-in slide-in-from-top-4 duration-150" id="mobile-menu-dropdown">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <button
-              onClick={() => {
-                onSelectCategory(null);
-                onNavigate('/');
-                setMobileMenuOpen(false);
-              }}
-              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
-                selectedCategorySlug === null ? 'bg-amber-50 text-amber-800' : 'text-stone-600 hover:bg-stone-50'
-              }`}
-            >
-              Todas as Coleções
-            </button>
-            {categorias.map(cat => (
+          <div className="px-4 pt-2 pb-4 space-y-3">
+            
+            {/* Mobile Search - Robust field positioned inside the mobile menu */}
+            <div className="relative mt-1 md:hidden">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Pesquisar por perucas, vestidos, bolsas..."
+                value={searchQuery}
+                onChange={(e) => {
+                  onSearchQueryChange(e.target.value);
+                  if (currentPath !== '/') {
+                    onNavigate('/');
+                  }
+                }}
+                className="w-full bg-[#FAF9F6] border border-stone-200 rounded-full pl-10 pr-4 py-2 text-xs text-stone-900 placeholder-stone-400 focus:border-amber-600 focus:outline-none focus:bg-white"
+              />
+            </div>
+
+            <div className="h-px bg-stone-100 my-2 md:hidden"></div>
+
+            <div className="space-y-1">
+              <p className="px-3 text-[10px] font-mono text-stone-400 uppercase tracking-widest mb-1.5">Coleções & Filtros</p>
               <button
-                key={cat.id}
                 onClick={() => {
-                  onSelectCategory(cat.slug);
+                  onSelectCategory(null);
+                  onSearchQueryChange('');
                   onNavigate('/');
                   setMobileMenuOpen(false);
                 }}
                 className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
-                  selectedCategorySlug === cat.slug ? 'bg-amber-50 text-amber-800' : 'text-stone-600 hover:bg-stone-50'
+                  selectedCategorySlug === null ? 'bg-amber-50 text-amber-800' : 'text-stone-600 hover:bg-stone-50'
                 }`}
               >
-                {cat.nome}
+                Todas as Coleções
               </button>
-            ))}
+              {categorias.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    onSelectCategory(cat.slug);
+                    onNavigate('/');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
+                    selectedCategorySlug === cat.slug ? 'bg-amber-50 text-amber-800 font-semibold' : 'text-stone-600 hover:bg-stone-50'
+                  }`}
+                >
+                  {cat.nome}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
     </nav>
   );
 }
+

@@ -233,10 +233,10 @@ INSERT INTO imagens_produto (id_produto, url, ranking) VALUES
 ('p2000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=800', 2),
 
 -- Vestido de Verão Kimbundu
-('p2000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800', 1),
+('p2000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&q=80&w=800', 1),
 
 -- Sandália Diamond
-('p3000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=800', 1),
+('p3000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&q=80&w=800', 1),
 
 -- Scarpin Nude
 ('p3000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=800', 1),
