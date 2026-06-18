@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, sans-serif;
+
+  --color-amber-50: #F5F2ED;
+  --color-amber-100: #EBE7E1;
+  --color-amber-200: #E1DBD2;
+  --color-amber-500: #A67C52;
+  --color-amber-600: #5A5A40;
+  --color-amber-700: #464632;
+  --color-amber-800: #383828;
+
+  --color-stone-50: #FDFCFB;
+  --color-stone-100: #EBE7E1;
+  --color-stone-200: #E1DBD2;
+  --color-stone-300: #D0C9BE;
+  --color-stone-400: #A8A092;
+  --color-stone-500: #8C8476;
+  --color-stone-850: #292925;
+  --color-stone-900: #1A1A1A;
+  --color-stone-950: #121210;
+}
+
+body {
+  background-color: #FDFCFB;
+  color: #1A1A1A;
+  font-family: var(--font-sans);
+}
+
+/* Precise CSS utility class overrides to morph existing app branding into the Natural Tones palette */
+.bg-\[\#FCFAF7\] {
+  background-color: #FDFCFB !important;
+}
+.bg-\[\#1D1B18\] {
+  background-color: #1A1A1A !important;
+}
+.bg-\[\#171512\] {
+  background-color: #5A5A40 !important;
+}
+.hover\:bg-\[\#171512\]:hover {
+  background-color: #4A4A32 !important;
+}
+.bg-\[\#151210\] {
+  background-color: #5A5A40 !important;
+}
+.text-\[\#151210\] {
+  color: #1A1A1A !important;
+}
+.border-\[\#151210\] {
+  border-color: #5A5A40 !important;
+}
+.bg-\[\#FAF9F6\] {
+  background-color: #F5F2ED !important;
+}
+.text-\[\#1D1B18\] {
+  color: #5A5A40 !important;
+}
+.bg-stone-950 {
+  background-color: #1A1A1A !important;
+}
+.hover\:bg-stone-950:hover {
+  background-color: #5A5A40 !important;
+}
+.bg-stone-900\/40 {
+  background-color: rgba(90, 90, 64, 0.4) !important;
+}

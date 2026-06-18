@@ -1,0 +1,6 @@
+{
+  "name": "femfashion",
+  "description": "Plataforma de E-commerce de Moda Feminina (perucas, vestidos, sapatos, bolsas, cosméticos, jóias) com painel backoffice administrativo completo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
