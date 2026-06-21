@@ -35,6 +35,7 @@ export default function Header({
   const currentPath = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-100 shadow-sm transition-all duration-200">
@@ -165,22 +166,6 @@ export default function Header({
 
           {/* User Interaction Controls */}
           <div className="flex items-center space-x-2 shrink-0">
-            {/* Admin Toggle button */}
-            {currentUser?.role === 'admin' && (
-              <button
-                onClick={() => onNavigate(currentPath.startsWith('/admin') ? '/' : '/admin')}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-mono tracking-wider uppercase transition-all ${
-                  currentPath.startsWith('/admin')
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`}
-                title="Ir para o Backoffice"
-                id="backoffice-quick-toggle-btn"
-              >
-                <Shield className="w-3 h-3 text-amber-500 fill-amber-500 animate-pulse" />
-                <span className="hidden sm:inline">BACKOFFICE</span>
-              </button>
-            )}
 
             {/* Account Icon Control */}
             {currentUser ? (
@@ -189,17 +174,30 @@ export default function Header({
                   <p className="text-[11px] font-mono font-medium text-stone-950 truncate max-w-[100px]">{currentUser.nome}</p>
                   <p className="text-[8px] font-mono text-amber-600 uppercase">{currentUser.role}</p>
                 </div>
-                <div className="relative group">
-                  <button className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FAF9F6] border border-stone-200 hover:border-amber-600 hover:text-amber-600 text-stone-700 transition" id="user-profile-menu-btn">
+                <div className="relative">
+                  <button 
+                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FAF9F6] border border-stone-200 hover:border-amber-600 hover:text-amber-600 text-stone-700 transition" 
+                    id="user-profile-menu-btn"
+                  >
                     <User className="w-4 h-4" />
                   </button>
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-stone-100 rounded-lg shadow-xl py-1 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-2 duration-100">
+
+                  {/* Backdrop to close menu when clicking outside */}
+                  {profileMenuOpen && (
+                    <div 
+                      className="fixed inset-0 z-40"
+                      onClick={() => setProfileMenuOpen(false)}
+                    />
+                  )}
+
+                  <div className={`absolute right-0 top-full mt-2 w-48 bg-white border border-stone-100 rounded-lg shadow-xl py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-100 ${profileMenuOpen ? 'block' : 'hidden'}`}>
                     <div className="px-4 py-2 border-b border-stone-50">
                       <p className="text-xs text-stone-400">Conta Ativa</p>
                       <p className="text-xs font-medium text-stone-900 font-mono truncate">{currentUser.email}</p>
                     </div>
                     <button
-                      onClick={() => onNavigate('/perfil')}
+                      onClick={() => { setProfileMenuOpen(false); onNavigate('/perfil'); }}
                       className="w-full text-left px-4 py-2 text-xs text-stone-700 hover:bg-stone-50 flex items-center gap-2"
                     >
                       <User className="w-3.5 h-3.5" />
@@ -208,6 +206,7 @@ export default function Header({
                     {currentUser.role === 'admin' && (
                       <button
                         onClick={() => {
+                          setProfileMenuOpen(false);
                           onNavigate('/admin');
                         }}
                         className="w-full text-left px-4 py-2 text-xs text-stone-700 hover:bg-amber-50 hover:text-amber-700 flex items-center gap-2"
@@ -218,7 +217,7 @@ export default function Header({
                       </button>
                     )}
                     <button
-                      onClick={onLogout}
+                      onClick={() => { setProfileMenuOpen(false); onLogout(); }}
                       className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2"
                       id="menu-logout-btn"
                     >
