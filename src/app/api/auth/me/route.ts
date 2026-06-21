@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase, hasConfig, SEED_USERS, serverGetUsers } from '@/services/db-server';
+import { supabase, hasConfig } from '@/services/db-server';
 import { cookies } from 'next/headers';
 
 export async function GET() {
@@ -13,8 +13,5 @@ export async function GET() {
     if (data) return NextResponse.json({ user: data });
   }
 
-  // Seed fallback
-  const users = await serverGetUsers();
-  const user = users.find(u => u.id === userId) || null;
-  return NextResponse.json({ user });
+  return NextResponse.json({ user: null });
 }

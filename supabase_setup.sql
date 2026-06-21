@@ -180,10 +180,10 @@ INSERT INTO categorias (id, nome, slug, descricao) VALUES
 ('a6000000-0000-0000-0000-000000000006', 'Jóias e Acessórios', 'joias-acessorios', 'Brincos de ouro, colares finos, pulseiras cravejadas e anéis de noivado.');
 
 -- Usuários (Admin Pré-configurado para desenvolvimento e teste)
--- Password hash simulado ou padrão: "admin123"
+-- Password hash usa SHA-256 (admin123 e cliente123)
 INSERT INTO usuarios (id, nome, email, password_hash, telefone, role) VALUES
-('f1000000-0000-0000-0000-000000000001', 'Administrador FemFashion', 'admin@femfashion.ao', 'admin123', '+244923000001', 'admin'),
-('f2000000-0000-0000-0000-000000000002', 'Helena Patrício', 'helena@gmail.com', 'cliente123', '+244931999888', 'cliente');
+('f1000000-0000-0000-0000-000000000001', 'Administrador FemFashion', 'admin@femfashion.ao', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', '+244923000001', 'admin'),
+('f2000000-0000-0000-0000-000000000002', 'Helena Patrício', 'helena@gmail.com', '09a31a7001e261ab1e056182a71d3cf57f582ca9a29cff5eb83be0f0549730a9', '+244931999888', 'cliente');
 
 -- Endereços iniciais para o utilizador de teste Helena
 INSERT INTO enderecos (id, id_usuario, provincia, municipio, bairro, rua, padrao) VALUES

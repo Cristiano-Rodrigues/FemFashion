@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { serverGetProducts, supabase, hasConfig, SEED_CATEGORIES, SEED_IMAGES, SEED_VARIANTS } from '@/services/db-server';
+import { serverGetProducts, supabase, hasConfig } from '@/services/db-server';
 import { Produto } from '@/types';
 
 export async function GET() {
@@ -41,6 +41,6 @@ export async function POST(req: NextRequest) {
     if (newVars.length) await supabase.from('variantes_produto').insert(newVars);
   }
 
-  const cat = SEED_CATEGORIES.find(c => c.id === id_categoria);
+  const cat = null;
   return NextResponse.json({ product: { ...newProd, categoria: cat, imagens: newImgs, variantes: newVars } }, { status: 201 });
 }
