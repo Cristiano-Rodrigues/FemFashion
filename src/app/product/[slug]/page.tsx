@@ -14,6 +14,7 @@ export default function ProductPage() {
 
   const [product, setProduct] = useState<ProdutoDetalhado | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<VarianteProduto | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -25,6 +26,9 @@ export default function ProductPage() {
       .then(data => {
         if (!data.product) { setNotFound(true); setLoading(false); return; }
         setProduct(data.product);
+        if (data.product.imagens?.length > 0) {
+          setSelectedImage(data.product.imagens[0].url);
+        }
         if (data.product.variantes?.length > 0) {
           setSelectedVariant(data.product.variantes[0]);
         }
@@ -47,7 +51,7 @@ export default function ProductPage() {
     </div>
   );
 
-  const imgUrl = product.imagens[0]?.url || 'https://images.unsplash.com/photo-1620331713537-bca9da369e80?auto=format&fit=crop&q=80&w=800';
+  const imgUrl = selectedImage || product.imagens[0]?.url || 'https://images.unsplash.com/photo-1620331713537-bca9da369e80?auto=format&fit=crop&q=80&w=800';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-350">
@@ -65,7 +69,13 @@ export default function ProductPage() {
           {product.imagens.length > 1 && (
             <div className="flex gap-2 justify-start overflow-x-auto py-1">
               {product.imagens.map((img, i) => (
-                <div key={i} className="w-16 h-16 border border-stone-200 hover:border-amber-600 rounded-lg overflow-hidden shrink-0 cursor-pointer">
+                <div 
+                  key={i} 
+                  onClick={() => setSelectedImage(img.url)}
+                  className={`w-16 h-16 border rounded-lg overflow-hidden shrink-0 cursor-pointer transition ${
+                    selectedImage === img.url ? 'border-amber-600 shadow-sm ring-2 ring-amber-600/20' : 'border-stone-200 hover:border-amber-400'
+                  }`}
+                >
                   <img src={img.url} alt={`Miniatura ${i}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
               ))}
