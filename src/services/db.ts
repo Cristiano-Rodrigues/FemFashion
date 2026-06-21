@@ -427,6 +427,18 @@ export class DatabaseService {
     return true;
   }
 
+  static async deleteUser(userId: string): Promise<boolean> {
+    if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
+    
+    const { error } = await supabase
+      .from('usuarios')
+      .delete()
+      .eq('id', userId);
+      
+    if (error) throw new Error(error.message);
+    return true;
+  }
+
   static async updateUserProfile(userId: string, updates: Partial<Usuario>): Promise<Usuario | null> {
     if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
     

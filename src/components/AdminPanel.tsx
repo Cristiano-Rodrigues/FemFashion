@@ -1032,6 +1032,15 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
     }
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    if (confirm('Tem a certeza que deseja eliminar este utilizador?')) {
+      const ok = await DatabaseService.deleteUser(userId);
+      if (ok) {
+        setUsers(prev => prev.filter(u => u.id !== userId));
+      }
+    }
+  };
+
   const renderUsers = () => {
     return (
       <div className="bg-white border border-stone-100 rounded-2xl p-5 shadow-sm space-y-4 animate-in fade-in duration-200">
@@ -1047,7 +1056,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                 <th className="py-1 px-3">E-mail</th>
                 <th className="py-1 px-3">Telefone</th>
                 <th className="py-1 px-3">Role / Autorização</th>
-                <th className="py-1 px-3 text-right">Alternar Acesso (Role)</th>
+                <th className="py-1 px-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-50 font-serif">
@@ -1065,7 +1074,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                       {u.role}
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-right flex justify-end">
+                  <td className="py-3 px-3 text-right flex justify-end gap-2">
                     <button
                       onClick={() => handleToggleUserRole(u)}
                       className={`flex items-center gap-1.5 px-3 py-1 border rounded-full text-[10px] font-mono uppercase cursor-pointer transition ${
@@ -1076,6 +1085,13 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                       id={`toggle-role-${u.id}-btn`}
                     >
                       {u.role === 'admin' ? 'Despromover' : 'Promover a Admin'}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(u.id)}
+                      className="p-1 px-2 border border-stone-100 text-red-600 hover:bg-red-50 rounded"
+                      title="Eliminar Utilizador"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </td>
                 </tr>
