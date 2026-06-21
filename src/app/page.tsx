@@ -40,14 +40,7 @@ export default function HomePage() {
     return matchesCategory && matchesSearch && p.ativo;
   });
 
-  const fallbackImages = [
-    'https://images.unsplash.com/photo-1620331713537-bca9da369e80?auto=format&fit=crop&q=80&w=200',
-    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=200',
-    'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=200',
-    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=200',
-    'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=200',
-    'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=200',
-  ];
+
 
   return (
     <div className="space-y-12 animate-in fade-in duration-300">
@@ -91,7 +84,7 @@ export default function HomePage() {
               <div key={cat.id} onClick={() => setSelectedCategorySlug(cat.slug)}
                 className="group flex flex-col items-center p-4 bg-white border border-stone-100 rounded-2xl hover:border-amber-200 transition cursor-pointer text-center">
                 <div className="w-16 h-16 rounded-full overflow-hidden mb-2.5 border border-stone-200/50">
-                  <img src={fallbackImages[idx] || fallbackImages[0]} alt={cat.nome} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                  <img src={cat.imagem_url || '/img/category-default-image.jpg'} alt={cat.nome} className="w-full h-full object-cover group-hover:scale-105 transition" />
                 </div>
                 <h3 className="font-serif font-black text-xs text-stone-900 tracking-wide leading-none">{cat.nome.split(' & ')[0]}</h3>
               </div>

@@ -75,10 +75,10 @@ export class DatabaseService {
     return data as Categoria[];
   }
 
-  static async createCategory(nome: string, slug: string, descricao?: string): Promise<Categoria> {
+  static async createCategory(nome: string, slug: string, descricao?: string, imagem_url?: string): Promise<Categoria> {
     if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
     
-    const newCat: Partial<Categoria> = { nome, slug, descricao };
+    const newCat: Partial<Categoria> = { nome, slug, descricao, imagem_url };
     
     const { data, error } = await supabase
       .from('categorias')
@@ -90,12 +90,12 @@ export class DatabaseService {
     return data as Categoria;
   }
 
-  static async updateCategory(id: string, nome: string, slug: string, descricao?: string): Promise<Categoria | null> {
+  static async updateCategory(id: string, nome: string, slug: string, descricao?: string, imagem_url?: string): Promise<Categoria | null> {
     if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
     
     const { data, error } = await supabase
       .from('categorias')
-      .update({ nome, slug, descricao })
+      .update({ nome, slug, descricao, imagem_url })
       .eq('id', id)
       .select()
       .single();

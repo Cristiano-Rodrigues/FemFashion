@@ -31,6 +31,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
   const [editingCategory, setEditingCategory] = useState<Categoria | null>(null);
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
+  const [catImg, setCatImg] = useState('');
   
   const [editingProduct, setEditingProduct] = useState<ProdutoDetalhado | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -223,7 +224,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
           <div className="bg-white border border-stone-100 rounded-2xl p-6 shadow-sm space-y-4">
             <div className="flex items-center gap-1.5 border-b border-stone-100 pb-3">
               <AlertOctagon className="w-5 h-5 text-red-500" />
-              <h3 className="text-xs font-serif font-bold text-stone-900 uppercase tracking-widest">Pânico de Stock Baixo</h3>
+              <h3 className="text-xs font-serif font-bold text-stone-900 uppercase tracking-widest">Alertas de Stock Baixo</h3>
             </div>
 
             <div className="overflow-y-auto max-h-[300px] divide-y divide-stone-100 pr-1">
@@ -262,14 +263,15 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
     const slug = catName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     if (editingCategory) {
-      await DatabaseService.updateCategory(editingCategory.id, catName, slug, catDesc);
+      await DatabaseService.updateCategory(editingCategory.id, catName, slug, catDesc, catImg);
     } else {
-      await DatabaseService.createCategory(catName, slug, catDesc);
+      await DatabaseService.createCategory(catName, slug, catDesc, catImg);
     }
 
     setEditingCategory(null);
     setCatName('');
     setCatDesc('');
+    setCatImg('');
     loadAllData();
   };
 
@@ -310,6 +312,16 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                 className="w-full bg-white border border-stone-200 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-600"
               />
             </div>
+            <div>
+              <label className="block text-[10px] font-mono text-stone-400 uppercase tracking-wider mb-1">URL da Imagem</label>
+              <input
+                type="text"
+                value={catImg}
+                onChange={(e) => setCatImg(e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className="w-full bg-white border border-stone-200 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-600 font-mono"
+              />
+            </div>
             <div className="flex gap-2">
               <button
                 type="submit"
@@ -324,6 +336,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                     setEditingCategory(null);
                     setCatName('');
                     setCatDesc('');
+                    setCatImg('');
                   }}
                   className="px-3 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 rounded-lg text-xs font-mono uppercase"
                 >
@@ -344,6 +357,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
               <thead>
                 <tr className="text-[10px] font-mono uppercase text-stone-400">
                   <th className="py-2.5 px-3">Nome</th>
+                  <th className="py-2.5 px-3">Imagem</th>
                   <th className="py-2.5 px-3">Slug</th>
                   <th className="py-2.5 px-3">Descrição</th>
                   <th className="py-2.5 px-3 text-right">Ações</th>
@@ -353,6 +367,13 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                 {categories.map(cat => (
                   <tr key={cat.id} className="hover:bg-stone-50/50">
                     <td className="py-3 px-3 font-bold text-stone-900">{cat.nome}</td>
+                    <td className="py-3 px-3">
+                      {cat.imagem_url ? (
+                        <img src={cat.imagem_url} alt={cat.nome} className="w-8 h-8 object-cover rounded" />
+                      ) : (
+                        <span className="text-stone-300">-</span>
+                      )}
+                    </td>
                     <td className="py-3 px-3 font-mono text-stone-500">{cat.slug}</td>
                     <td className="py-3 px-3 italic truncate max-w-[200px] text-stone-400 font-light">{cat.descricao || '-'}</td>
                     <td className="py-3 px-3 text-right flex justify-end gap-1.5">
@@ -361,6 +382,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                           setEditingCategory(cat);
                           setCatName(cat.nome);
                           setCatDesc(cat.descricao || '');
+                          setCatImg(cat.imagem_url || '');
                         }}
                         className="p-1 px-2 border border-stone-100 text-stone-600 hover:bg-stone-200 rounded"
                         title="Editar"

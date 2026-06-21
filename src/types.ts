@@ -15,6 +15,7 @@ export interface Categoria {
   nome: string;
   slug: string;
   descricao?: string;
+  imagem_url?: string;
 }
 
 export interface Produto {

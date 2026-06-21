@@ -35,7 +35,8 @@ CREATE TABLE categorias (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nome VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
-    descricao TEXT
+    descricao TEXT,
+    imagem_url TEXT
 );
 
 -- Tabela: produtos
