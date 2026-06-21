@@ -76,7 +76,7 @@ export default function Header({
               }`}
               id="nav-all-products-btn"
             >
-              Coleções
+              Ver tudo
             </button>
 
             {/* Elegant Dropdown for Categories */}

@@ -27,7 +27,7 @@ export default function Cart({
   onOpenAuth
 }: CartProps) {
   const [step, setStep] = useState<'cart' | 'checkout' | 'payment-pending' | 'success'>('cart');
-  const [paymentMethod, setPaymentMethod] = useState<'MCX_EXPRESS' | 'UNITEL_MONEY'>('MCX_EXPRESS');
+  const [paymentMethod, setPaymentMethod] = useState<'MCX_EXPRESS'>('MCX_EXPRESS');
   
   // Checkout address form
   const [provincia, setProvincia] = useState('Luanda');
@@ -36,11 +36,8 @@ export default function Cart({
   const [rua, setRua] = useState('');
   const [telefone, setTelefone] = useState('');
   
-  // MCX Express Payment simulations
   const [mcxPhone, setMcxPhone] = useState('');
   const [mcxTimer, setMcxTimer] = useState(45);
-  const [unitelPhone, setUnitelPhone] = useState('');
-  const [unitelPin, setUnitelPin] = useState('');
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -116,11 +113,6 @@ export default function Cart({
       return;
     }
 
-    if (paymentMethod === 'UNITEL_MONEY' && (!unitelPhone || unitelPhone.length < 9 || unitelPin.length < 4)) {
-      setCheckoutError('Por favor, insira um número Unitel Money válido e seu PIN de 4 dígitos.');
-      return;
-    }
-
     setIsProcessing(true);
 
     try {
@@ -142,30 +134,6 @@ export default function Cart({
         
         // Log event
         DatabaseService.logEvent('checkout_espera_mcx', '/checkout', null, { total, telf: mcxPhone });
-      } else {
-        // Unitel Money direct verification animation
-        setTimeout(async () => {
-          const { order, error } = await DatabaseService.createOrder(
-            currentUser.id,
-            address.id,
-            cartItems,
-            subtotal,
-            taxaEntrega,
-            total,
-            'UNITEL_MONEY'
-          );
-
-          setIsProcessing(false);
-
-          if (error) {
-            setCheckoutError(error);
-          } else {
-            setCreatedOrder(order);
-            setStep('success');
-            onClearCart();
-            DatabaseService.logEvent('compra_sucesso', '/checkout', null, { orderId: order?.id, total });
-          }
-        }, 2000);
       }
     } catch (err: any) {
       setIsProcessing(false);
@@ -221,7 +189,7 @@ export default function Cart({
       />
 
       {/* Cart Slider Box */}
-      <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200">
+      <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10">
         
         {/* Header toolbar */}
         <div className="px-6 py-5 border-b border-stone-100 flex justify-between items-center bg-stone-50">
@@ -445,7 +413,7 @@ export default function Cart({
                 <h3 className="text-xs font-serif font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">
                   2. Método de Pagamento
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {/* Multicaixa Express */}
                   <label 
                     onClick={() => setPaymentMethod('MCX_EXPRESS')}
@@ -458,76 +426,31 @@ export default function Cart({
                     <span className="font-mono text-xs tracking-wider uppercase font-black text-blue-800">MCX Express</span>
                     <span className="text-[10px] text-stone-500 mt-1">Ref. telemóvel</span>
                   </label>
-
-                  {/* Unitel Money */}
-                  <label 
-                    onClick={() => setPaymentMethod('UNITEL_MONEY')}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center cursor-pointer transition ${
-                      paymentMethod === 'UNITEL_MONEY' 
-                        ? 'border-amber-600 bg-amber-50/40 text-stone-900 font-bold' 
-                        : 'border-stone-200 bg-white hover:bg-stone-50 text-stone-600'
-                    }`}
-                  >
-                    <span className="font-mono text-xs tracking-wider uppercase font-black text-amber-600">Unitel Money</span>
-                    <span className="text-[10px] text-stone-500 mt-1">PIN Telefone</span>
-                  </label>
                 </div>
 
                 {/* Sub-inputs dependent on chosen payment method */}
-                {paymentMethod === 'MCX_EXPRESS' ? (
-                  <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl space-y-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <CreditCard className="w-4 h-4 text-blue-700" />
-                      <span className="text-xs font-serif font-bold text-blue-900">Configuração Multicaixa Express</span>
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-mono text-blue-700 uppercase tracking-wider mb-1">Número do Telefone Adesão Express</label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-xs text-blue-700 font-mono font-medium">+244</span>
-                        <input
-                          type="number"
-                          placeholder="9XXXXXXXX"
-                          value={mcxPhone}
-                          onChange={(e) => setMcxPhone(e.target.value)}
-                          className="w-full bg-white border border-blue-200 rounded-lg py-2 pl-14 pr-3 text-xs focus:outline-none focus:border-blue-600 font-mono"
-                        />
-                      </div>
-                      <p className="text-[9px] text-blue-600 mt-1">
-                        Será espoletada uma notificação fictícia de pagamento no seu ecrã para validar o checkout.
-                      </p>
-                    </div>
+                <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl space-y-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CreditCard className="w-4 h-4 text-blue-700" />
+                    <span className="text-xs font-serif font-bold text-blue-900">Configuração Multicaixa Express</span>
                   </div>
-                ) : (
-                  <div className="p-4 bg-amber-50/40 border border-amber-100 rounded-xl space-y-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Phone className="w-4 h-4 text-amber-700" />
-                      <span className="text-xs font-serif font-bold text-amber-900">Credenciais Unitel Money</span>
+                  <div>
+                    <label className="block text-[9px] font-mono text-blue-700 uppercase tracking-wider mb-1">Número do Telefone Adesão Express</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-xs text-blue-700 font-mono font-medium">+244</span>
+                      <input
+                        type="number"
+                        placeholder="9XXXXXXXX"
+                        value={mcxPhone}
+                        onChange={(e) => setMcxPhone(e.target.value)}
+                        className="w-full bg-white border border-blue-200 rounded-lg py-2 pl-14 pr-3 text-xs focus:outline-none focus:border-blue-600 font-mono"
+                      />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[9px] font-mono text-amber-700 uppercase tracking-wider mb-1">Telemóvel Unitel</label>
-                        <input
-                          type="number"
-                          placeholder="9XXXXXXXX"
-                          value={unitelPhone}
-                          onChange={(e) => setUnitelPhone(e.target.value)}
-                          className="w-full bg-white border border-amber-200 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-600 font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[9px] font-mono text-amber-700 uppercase tracking-wider mb-1">PIN Carteira (4 Dígitos)</label>
-                        <input
-                          type="password"
-                          maxLength={4}
-                          placeholder="••••"
-                          value={unitelPin}
-                          onChange={(e) => setUnitelPin(e.target.value)}
-                          className="w-full bg-white border border-amber-200 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-600 font-mono text-center tracking-widest"
-                        />
-                      </div>
-                    </div>
+                    <p className="text-[9px] text-blue-600 mt-1">
+                      Será espoletada uma notificação fictícia de pagamento no seu ecrã para validar o checkout.
+                    </p>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Trust badges protection indicator */}
@@ -568,7 +491,7 @@ export default function Cart({
         {/* STEP 3: INTERACTIVE MULTICAIXA EXPRESS VERIFICATION NOTIFICATION SIMULATOR */}
         {step === 'payment-pending' && (
           <div className="flex-grow flex flex-col justify-center items-center px-6 py-12 bg-blue-900 text-white h-full">
-            <div className="w-full max-w-sm bg-white rounded-3xl p-6 text-stone-900 shadow-2xl border-4 border-stone-900/65 relative animate-bounce">
+            <div className="w-full max-w-sm bg-white rounded-3xl p-6 text-stone-900 shadow-2xl border-4 border-stone-900/65 relative">
               <div className="w-12 h-1 bg-stone-300 rounded mx-auto mb-4" />
               
               <div className="text-center mb-6">

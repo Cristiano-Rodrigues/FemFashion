@@ -187,7 +187,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                 As vendas estimadas por pagamento em Angola dividem-se nos seguintes canais:
               </p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="p-4 bg-stone-50 border border-stone-100 rounded-xl">
                   <span className="text-[10px] uppercase tracking-wider font-mono text-blue-700 font-bold block">Multicaixa Express</span>
                   <span className="text-lg font-serif font-black text-stone-900 leading-none block mt-1">
@@ -195,15 +195,6 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
                   </span>
                   <span className="text-xs text-stone-400 font-mono">
                     {formatKz(orders.filter(o => o.metodo_pagamento === 'MCX_EXPRESS').reduce((sum, o) => sum + o.total, 0))} faturado
-                  </span>
-                </div>
-                <div className="p-4 bg-stone-50 border border-stone-100 rounded-xl">
-                  <span className="text-[10px] uppercase tracking-wider font-mono text-amber-700 font-bold block">Unitel Money</span>
-                  <span className="text-lg font-serif font-black text-stone-900 leading-none block mt-1">
-                    {orders.filter(o => o.metodo_pagamento === 'UNITEL_MONEY').length} Encomendas
-                  </span>
-                  <span className="text-xs text-stone-400 font-mono">
-                    {formatKz(orders.filter(o => o.metodo_pagamento === 'UNITEL_MONEY').reduce((sum, o) => sum + o.total, 0))} faturado
                   </span>
                 </div>
               </div>
