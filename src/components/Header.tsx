@@ -198,6 +198,13 @@ export default function Header({
                       <p className="text-xs text-stone-400">Conta Ativa</p>
                       <p className="text-xs font-medium text-stone-900 font-mono truncate">{currentUser.email}</p>
                     </div>
+                    <button
+                      onClick={() => onNavigate('/perfil')}
+                      className="w-full text-left px-4 py-2 text-xs text-stone-700 hover:bg-stone-50 flex items-center gap-2"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      A Minha Conta
+                    </button>
                     {currentUser.role === 'admin' && (
                       <button
                         onClick={() => {

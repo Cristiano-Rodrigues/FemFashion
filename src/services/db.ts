@@ -292,6 +292,20 @@ export class DatabaseService {
     return data as Endereco;
   }
 
+  static async updateAddress(id: string, updates: Partial<Endereco>): Promise<boolean> {
+    if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
+    const { error } = await supabase.from('enderecos').update(updates).eq('id', id);
+    if (error) throw new Error(error.message);
+    return true;
+  }
+
+  static async deleteAddress(id: string): Promise<boolean> {
+    if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
+    const { error } = await supabase.from('enderecos').delete().eq('id', id);
+    if (error) throw new Error(error.message);
+    return true;
+  }
+
   static async getOrders(): Promise<PedidoDetalhado[]> {
     if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
     
@@ -381,6 +395,14 @@ export class DatabaseService {
     return true;
   }
 
+  static async getOrdersForUser(userId: string): Promise<PedidoDetalhado[]> {
+    if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
+    
+    // Simplificado para usar getOrders e filtrar (em produção deverá ser uma query com EQ)
+    const allOrders = await this.getOrders();
+    return allOrders.filter(o => o.id_usuario === userId);
+  }
+
   static async getUsers(): Promise<Usuario[]> {
     if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
     
@@ -403,6 +425,20 @@ export class DatabaseService {
       
     if (error) throw new Error(error.message);
     return true;
+  }
+
+  static async updateUserProfile(userId: string, updates: Partial<Usuario>): Promise<Usuario | null> {
+    if (!hasSupabaseConfig || !supabase) throw new NotConfigureSupabase();
+    
+    const { data, error } = await supabase
+      .from('usuarios')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+      
+    if (error) throw new Error(error.message);
+    return data as Usuario;
   }
 
   static async logEvent(

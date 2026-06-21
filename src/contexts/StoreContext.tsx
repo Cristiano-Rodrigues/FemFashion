@@ -42,6 +42,7 @@ interface StoreContextType {
   // Utils
   formatKz: (value: number) => string;
   navigate: (path: string) => void;
+  fetchCurrentUser: () => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -67,18 +68,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
 
+  const fetchCurrentUser = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) setCurrentUser(data.user);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   // Load current user on mount
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.user) setCurrentUser(data.user);
-        }
-      } catch { /* ignore */ }
-    })();
-  }, []);
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
 
   const navigate = useCallback((path: string) => {
     router.push(path);
@@ -178,6 +181,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       authPassword, setAuthPassword, authPhone, setAuthPhone,
       handleAuthSubmit, handleLogout, formatKz, navigate,
       searchQuery, setSearchQuery, selectedCategorySlug, setSelectedCategorySlug,
+      fetchCurrentUser
     }}>
       {children}
     </StoreContext.Provider>
