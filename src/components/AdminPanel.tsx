@@ -5,10 +5,15 @@ import {
   BarChart, Layers, Tag, Box, DollarSign, 
   Plus, Edit, Trash2, CheckCircle, XCircle, 
   Users, RefreshCw, ShoppingCart, TrendingUp,
-  AlertOctagon, Check, ToggleLeft, ToggleRight
+  AlertOctagon, Check, ToggleLeft, ToggleRight, Activity, FlaskConical
 } from 'lucide-react';
 import { Categoria, ProdutoDetalhado, PedidoDetalhado, Usuario, VarianteProduto } from '@/types';
 import { DatabaseService } from '@/services/db';
+import dynamic from 'next/dynamic';
+
+const HeatmapCanvas = dynamic(() => import('@/components/admin/HeatmapCanvas'), { ssr: false });
+const FunnelChart = dynamic(() => import('@/components/admin/FunnelChart'), { ssr: false });
+const ABTestResults = dynamic(() => import('@/components/admin/ABTestResults'), { ssr: false });
 
 interface AdminPanelProps {
   currentUser: Usuario | null;
@@ -16,7 +21,8 @@ interface AdminPanelProps {
 }
 
 export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'categories' | 'stock' | 'orders' | 'users'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'analytics' | 'products' | 'categories' | 'stock' | 'orders' | 'users'>('dashboard');
+  const [analyticsSubTab, setAnalyticsSubTab] = useState<'funil' | 'heatmap' | 'ab'>('funil');
 
   // Unified application state loaded from DatabaseService
   const [products, setProducts] = useState<ProdutoDetalhado[]>([]);
@@ -1104,6 +1110,39 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
   };
 
 
+  const renderAnalytics = () => {
+    return (
+      <div className="space-y-5 animate-in fade-in duration-200">
+        <div className="flex gap-2 border-b border-stone-100 pb-1">
+          {([
+            { key: 'funil', label: 'Funil de Vendas', icon: <TrendingUp className="w-3.5 h-3.5" /> },
+            { key: 'heatmap', label: 'Heatmap', icon: <Activity className="w-3.5 h-3.5" /> },
+            { key: 'ab', label: 'A/B Testing', icon: <FlaskConical className="w-3.5 h-3.5" /> },
+          ] as const).map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setAnalyticsSubTab(tab.key)}
+              className={`flex items-center gap-1.5 px-4 py-2 text-[10px] font-mono uppercase tracking-wider rounded-t-lg transition ${
+                analyticsSubTab === tab.key
+                  ? 'bg-stone-900 text-white font-bold'
+                  : 'text-stone-500 hover:bg-stone-50'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="bg-white border border-stone-100 rounded-2xl p-6 shadow-sm">
+          {analyticsSubTab === 'funil' && <FunnelChart />}
+          {analyticsSubTab === 'heatmap' && <HeatmapCanvas />}
+          {analyticsSubTab === 'ab' && <ABTestResults />}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-serif" id="admin-backoffice-main-stage">
       <div className="flex flex-col md:flex-row gap-6">
@@ -1125,6 +1164,16 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
             >
               <BarChart className="w-4 h-4 text-amber-500" />
               Estatísticas
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-mono uppercase tracking-wider text-left transition ${
+                activeTab === 'analytics' ? 'bg-[#1D1B18] text-white font-bold' : 'text-stone-600 hover:bg-stone-50'
+              }`}
+              id="tab-analytics-btn"
+            >
+              <Activity className="w-4 h-4 text-amber-500" />
+              Analytics
             </button>
             <button
               onClick={() => setActiveTab('products')}
@@ -1199,6 +1248,7 @@ export default function AdminPanel({ currentUser, onNavigateHome }: AdminPanelPr
           ) : (
             <>
               {activeTab === 'dashboard' && renderDashboard()}
+              {activeTab === 'analytics' && renderAnalytics()}
               {activeTab === 'categories' && renderCategories()}
               {activeTab === 'products' && renderProducts()}
               {activeTab === 'stock' && renderStock()}

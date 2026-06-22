@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingBag, X, Trash2, Plus, Minus, CreditCard, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck, Phone } from 'lucide-react';
 import { CartItem, Endereco } from '@/types';
 import { DatabaseService } from '@/services/db';
+import { useTracking } from '@/contexts/TrackingContext';
 
 interface CartProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function Cart({
   currentUser,
   onOpenAuth
 }: CartProps) {
+  const { trackEvent } = useTracking();
   const [step, setStep] = useState<'cart' | 'checkout' | 'payment-pending' | 'success'>('cart');
   const [paymentMethod, setPaymentMethod] = useState<'MCX_EXPRESS'>('MCX_EXPRESS');
   
@@ -98,6 +100,7 @@ export default function Cart({
       onOpenAuth();
       return;
     }
+    trackEvent('iniciar_checkout', null, { total, items: cartItems.length });
     setStep('checkout');
   };
 
@@ -127,13 +130,9 @@ export default function Cart({
       );
 
       if (paymentMethod === 'MCX_EXPRESS') {
-        // Trigger push notification screen simulation
         setIsProcessing(false);
         setMcxTimer(45);
         setStep('payment-pending');
-        
-        // Log event
-        DatabaseService.logEvent('checkout_espera_mcx', '/checkout', null, { total, telf: mcxPhone });
       }
     } catch (err: any) {
       setIsProcessing(false);
@@ -169,7 +168,7 @@ export default function Cart({
         setCreatedOrder(order);
         setStep('success');
         onClearCart();
-        DatabaseService.logEvent('compra_sucesso', '/checkout', null, { orderId: order?.id, total });
+        trackEvent('compra_sucesso', null, { orderId: order?.id, total });
       }
     } catch (err: any) {
       setIsProcessing(false);

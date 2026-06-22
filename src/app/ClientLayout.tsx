@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useStore } from '@/contexts/StoreContext';
+import { TrackingProvider } from '@/contexts/TrackingContext';
 import Header from '@/components/Header';
 import Cart from '@/components/Cart';
 import AuthModal from '@/components/AuthModal';
+import ConsentBanner from '@/components/ConsentBanner';
 import { Categoria } from '@/types';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -29,6 +31,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const cartCount = cartItems.reduce((acc, c) => acc + c.quantidade, 0);
 
   return (
+    <TrackingProvider>
     <div className="min-h-screen bg-[#FCFAF7] text-stone-900 selection:bg-amber-100 flex flex-col font-serif antialiased">
       {/* Top Banner */}
       <div className="bg-[#1D1B18] text-white py-2 text-center text-[10px] font-mono tracking-widest uppercase flex items-center justify-center gap-2">
@@ -96,6 +99,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       />
 
       <AuthModal />
+      <ConsentBanner />
     </div>
+    </TrackingProvider>
   );
 }
